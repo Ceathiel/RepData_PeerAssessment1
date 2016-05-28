@@ -14,7 +14,7 @@ The data is loaded from `activity.csv` (which is assumed to be available in the 
 
 Additionally, the `date` column for the resulting `activity` data frame was converted from factor to Date.
 
-```{r}
+```{r loading}
 activity <- read.csv("activity.csv", header = TRUE)
 activity$date <- as.Date(activity$date, format = "%Y-%m-%d")
 ```
@@ -23,7 +23,7 @@ activity$date <- as.Date(activity$date, format = "%Y-%m-%d")
 
 To answer this question, we need to aggregate the data in `activity`. This is done using the `group_by()` function in `dplyr` library. 
 
-``` {r}
+``` {r calcDayTotal}
 library(dplyr, warn.conflicts=FALSE)
 
 byDay <- group_by(activity, date) %>% summarize(sum(steps))
@@ -32,7 +32,7 @@ names(byDay) <- c("date", "totalSteps")
 
 Now that the total steps taken per day has been calculated, we can now plot it.
 
-```{r}
+```{r histDayTotal}
 par(mfrow=c(1,1))
 hist(byDay$totalSteps, xlab="Total Steps per Day",
      main = "Histogram of Total Steps per Day", col="green")
@@ -40,7 +40,7 @@ hist(byDay$totalSteps, xlab="Total Steps per Day",
 
 We can also calculate the mean and median of total steps taken per day from the same dataset
 
-``` {r}
+``` {r meanDayTota}
 mean(byDay$totalSteps, na.rm = TRUE)
 median(byDay$totalSteps, na.rm = TRUE)
 ```
@@ -50,7 +50,7 @@ median(byDay$totalSteps, na.rm = TRUE)
 To check the daily activity pattern, we will now take the average of steps taken per interval across all days and store it in an object called `byInterval`, then take the interval with maximum average steps and store it in an object called `maxInt`.
 
 
-``` {r}
+``` {r calcIntAvg}
 byInterval <- group_by(activity, interval) %>% summarize(round(mean(steps, na.rm=TRUE), 0))
 names(byInterval) <- c("interval", "meanSteps")
 maxInt <- byInterval[byInterval$meanSteps==max(byInterval$meanSteps),]
@@ -59,7 +59,7 @@ print(maxInt)
 
 We will use these objects to plot a time series for the average steps and We will also mark the interval with the maximum number of steps with a red line.
 
-```{r}
+```{r plotIntAvg}
 with(byInterval, plot(interval, meanSteps, type="l", ylab = "Average Steps",
                       xlab="Interval", main="Average Steps per Interval"))
 abline(v=maxInt[1,1], col="red")
@@ -69,7 +69,7 @@ abline(v=maxInt[1,1], col="red")
 
 To check the total number of rows with NAs, we will use the function `complete.cases()`.
 
-```{r}
+```{r checkNA}
 sum(!complete.cases(activity))
 ```
 
@@ -79,7 +79,7 @@ We also create a new column called `modSteps` which should contain the same data
 
 Finally, we retain only the columns `modSteps`, `date` and `interval` to create a dataset of similar structure as `activity`.
 
-```{r}
+```{r impNA}
 activityRep <- merge(activity, byInterval)
 activityRep$modSteps <- activityRep$steps
 activityRep[!complete.cases(activityRep), 5] <- activityRep[!complete.cases(activityRep), 4]
@@ -92,7 +92,7 @@ names(byDayRep) <- c("date", "totalSteps")
 
 We will now compare data before and after replacing the NAs by plotting the histogram.
 
-```{r}
+```{r histBeforeAfter}
 par(mfrow=c(1,2))
 hist(byDay$totalSteps, xlab="Total Steps per Day", 
      main = "Total Steps per Day (with NA)", col="green")
@@ -107,7 +107,7 @@ abline(v=median(byDayRep$totalSteps, na.rm = TRUE), col="blue")
 
 We can also check how the mean and median changed after replacing the NAs
 
-```{r}
+```{r meanBeforeAfter}
 compMean <- c("mean", mean(byDay$totalSteps, na.rm = TRUE), 
               mean(byDayRep$totalSteps, na.rm = TRUE))
 compMedian <- c("median", median(byDay$totalSteps, na.rm = TRUE), 
@@ -120,7 +120,7 @@ print(compMedian)
 
 To show the difference in patterns of activity, we will add a column to the `activityRep` data set which will tell us if the date is a weekday or weekend.
 
-```{r}
+```{r calcWeekday}
 days <- weekdays(activityRep$date, abbreviate = TRUE)
 activityRep$Day <- factor(ifelse(days=="Sat"|days=="Sun", "Weekend", "Weekday"))
 str(activityRep)
@@ -128,7 +128,7 @@ str(activityRep)
 
 We will now plot this data
 
-```{r}
+```{r plotWeekday}
 library(ggplot2, warn.conflicts=FALSE)
 
 p <- ggplot(activityRep, aes(interval, steps))

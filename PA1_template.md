@@ -34,7 +34,7 @@ hist(byDay$totalSteps, xlab="Total Steps per Day",
      main = "Histogram of Total Steps per Day", col="green")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](PA1_template_files/figure-html/histDayTotal-1.png)<!-- -->
 
 We can also calculate the mean and median of total steps taken per day from the same dataset
 
@@ -85,7 +85,7 @@ with(byInterval, plot(interval, meanSteps, type="l", ylab = "Average Steps",
 abline(v=maxInt[1,1], col="red")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](PA1_template_files/figure-html/plotIntAvg-1.png)<!-- -->
 
 ## Imputing missing values
 
@@ -134,7 +134,7 @@ abline(v=mean(byDayRep$totalSteps, na.rm = TRUE), col="red")
 abline(v=median(byDayRep$totalSteps, na.rm = TRUE), col="blue")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](PA1_template_files/figure-html/histBeforeAfter-1.png)<!-- -->
 
 We can also check how the mean and median changed after replacing the NAs
 
@@ -191,4 +191,4 @@ p + stat_summary(fun.y='mean', geom="line", color="steelblue")+
   labs(title="Average Steps for Weekdays and Weekends")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](PA1_template_files/figure-html/plotWeekday-1.png)<!-- -->
